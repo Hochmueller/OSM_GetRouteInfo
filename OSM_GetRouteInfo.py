@@ -8,7 +8,13 @@ import requests
 import json
 import os
 
-
+"""
+This class can:
+ - find routes between coordinates and create a list of nodes
+ - create of distance between nodes
+ - find the ways the route nodes are on (via overpass api)
+ - create a list of max speed on each way
+"""
 class GetRoutInfo(object):
     def __init__(self,localFile):
         # https://wiki.openstreetmap.org/wiki/Routing
@@ -26,6 +32,11 @@ class GetRoutInfo(object):
         else:
             self.router = Router("car")
 
+    """
+    This methode is setting the weights for the used router
+    Check out the follwoing web page for further details 
+    # https://wiki.openstreetmap.org/wiki/Routing
+    """
     def setRouteweights(self, motorway, trunk, primary, secondary, tertiary, unclassified, residential, track, service):
         pyroutelib3.TYPES["car"]['weights']['motorway'] = motorway
         pyroutelib3.TYPES["car"]['weights']['trunk'] = trunk
@@ -37,6 +48,9 @@ class GetRoutInfo(object):
         pyroutelib3.TYPES["car"]['weights']['track'] = track
         pyroutelib3.TYPES["car"]['weights']['service'] = service
 
+    """
+    This methode findes a route between two points defined by coordinates
+    """
     def routeF(self, p1Lag, p1Long, p2Lag, p2Long):
         self.s=(p1Lag,p1Long)
         self.e=(p2Lag,p2Long)
@@ -62,6 +76,9 @@ class GetRoutInfo(object):
             else:
                 raise Exception("could not find a route from two points p1: ({}) p2: ({}). Status:{}".format(start,end,status))
 
+    """
+    This methode prints the route into a map
+    """
     def printRoute(self,dpi,width):
         tilemapbase.start_logging()
         tilemapbase.init(create=True)
@@ -94,7 +111,12 @@ class GetRoutInfo(object):
 
 
 
-
+    """
+    This methode is used to find ways onto which the nodes are placed 
+    This is done via Overpass API
+    Due to the fact a node can be a member of several ways a simple algorithi is used which 
+    search for the correct way. 
+    """
     def getWay(self):
         #https://www.openstreetmap.org/node/34817889 -> To see node in osm.org
         #http://overpass-api.de/api/interpreter?data=[out:json];node(34817889);way(bn);out; 
@@ -171,6 +193,12 @@ class GetRoutInfo(object):
             with open(wayfile,'w') as f:
                 json.dump(self.way,f)
 
+
+    """
+    This methode is used to extract the maxspeed data for the ways. 
+    If no maxspeed is specifired a assumption depending on the 
+    road classification is met
+    """
     def getMaxSpeed(self):
         speed = []
         for i in self.way:
@@ -209,6 +237,9 @@ class GetRoutInfo(object):
 
         self.maxSpeed=speed
 
+    """ 
+    This methode is used to create a list of distances between each node
+    """
     def getDist(self):
         # list of distance between nodes
         self.distance = []
