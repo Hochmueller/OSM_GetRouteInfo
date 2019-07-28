@@ -7,7 +7,7 @@ import tilemapbase
 import requests
 import json
 import os
-
+from IPython.core.debugger import set_trace
 """
 This class can:
  - find routes between coordinates and create a list of nodes
@@ -144,7 +144,11 @@ class GetRoutInfo(object):
                         break
                     except: 
                         print("error {}".format(i))
-                
+            
+            #set_trace()
+            with open(wayfile+"temp.json",'w') as f:
+                json.dump(data,f)
+
 
             #remove not needed information
             elements = []
@@ -180,7 +184,12 @@ class GetRoutInfo(object):
             cnt = 0
             for i in range(1, len(ways)):
                 if cnt > 1:
-                    raise Exception("can't detect correct way point!")
+                    #set_trace()
+                    print("{} duplicate found".format(cnt))
+                    for i in range(0,cnt-1):
+                        del(way[-1])
+                    #raise Exception("can't detect correct way point!")
+
 
                 cnt = 0
                 for j in range(0, len(ways[i])):
@@ -214,7 +223,7 @@ class GetRoutInfo(object):
                     speed.append(100)
                 elif i['tags']['highway'] == 'trunk':
                     speed.append(100)
-                elif i['tags']['highway'] == 'tunk_link':
+                elif i['tags']['highway'] == 'trunk_link':
                     speed.append(100)
                 elif i['tags']['highway'] == 'primary':
                     speed.append(100)
