@@ -9,7 +9,7 @@ import json
 import os
 
 
-class tEst(object):
+class GetRoutInfo(object):
     def __init__(self,localFile):
         # https://wiki.openstreetmap.org/wiki/Routing
         pyroutelib3.TYPES["car"]['weights']['motorway'] = 20
@@ -26,6 +26,16 @@ class tEst(object):
         else:
             self.router = Router("car")
 
+    def setRouteweights(self, motorway, trunk, primary, secondary, tertiary, unclassified, residential, track, service):
+        pyroutelib3.TYPES["car"]['weights']['motorway'] = motorway
+        pyroutelib3.TYPES["car"]['weights']['trunk'] = trunk
+        pyroutelib3.TYPES["car"]['weights']['primary'] = primary
+        pyroutelib3.TYPES["car"]['weights']['secondary'] = secondary
+        pyroutelib3.TYPES["car"]['weights']['tertiary'] = tertiary
+        pyroutelib3.TYPES["car"]['weights']['unclassified'] = unclassified
+        pyroutelib3.TYPES["car"]['weights']['residential'] = residential
+        pyroutelib3.TYPES["car"]['weights']['track'] = track
+        pyroutelib3.TYPES["car"]['weights']['service'] = service
 
     def routeF(self, p1Lag, p1Long, p2Lag, p2Long):
         self.s=(p1Lag,p1Long)
